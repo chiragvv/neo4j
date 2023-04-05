@@ -1,0 +1,5 @@
+LOAD CSV WITH HEADERS FROM "file:///certifications.csv" AS row
+MERGE (s:Subject {name: row.source})
+MERGE (o:Object {name: row.target})
+MERGE (s)-[p:certified {name: row.edge}]->(o)
+return o,p,s
