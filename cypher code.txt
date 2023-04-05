@@ -1,0 +1,50 @@
+load csv with headers from"file:///resumetriples.csv"as row
+MERGE(s:Subject{name:row.subject})
+MERGE(o:Object{skills:row.object})
+MERGE(o)-[:PREDICATE{relates:row.relation}]->(s)
+return s,p,o
+
+MATCH (o:Object)-[p:PREDICATE]-(s:Subject) where p.relates = "skilled at"
+return s.name as name,o.skills as skills
+
+MATCH (o:Object) - [p:PREDICATE{relates:"skilled at"}] - (s:Subject)
+RETURN s.name, COUNT(p) as total_skills
+ORDER BY total_skills DESC
+
+ 
+
+MATCH (o:Object) - [p:PREDICATE] -> (s:Subject)
+WHERE o.skills = "Power BI"
+RETURN s.name as name
+
+ 
+
+MATCH (o:Object) - [p:PREDICATE{relates:"skilled at"}] - (s:Subject)
+with s.name as name,count(p) as total_skills
+where total_skills>4
+RETURN name
+
+ 
+
+MATCH (o:Object) - [p:PREDICATE] -> (s:Subject)
+WHERE o.skills = "Spark" or o.skills="SQL"
+RETURN s.name as name
+
+ 
+
+MATCH (o:Object) - [p:PREDICATE{relates:"works at"}] - (s:Subject)
+where o.skills="Insight"
+RETURN s.name as name
+
+ 
+
+MATCH (o:Object) - [p:PREDICATE{relates:"skilled at"}] - (s:Subject)
+RETURN s.name, COUNT(p) as total_skills
+ORDER BY total_skills DESC
+limit 2
+
+ 
+
+MATCH (o:Object)-[p:PREDICATE{relates:"skilled at"}]-(s:Subject)
+RETURN o.skills as skill, count(o) as freq
+ORDER BY freq DESC
